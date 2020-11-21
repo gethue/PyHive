@@ -361,8 +361,8 @@ class HiveDialect(default.DefaultDialect):
         query = 'SHOW TABLES'
         if schema:
             query += ' IN ' + self.identifier_preparer.quote_identifier(schema)
-        # HS2 returns one column, but SparkSQL returns 2 (schema, table_name)
-        return [row[-1] for row in connection.execute(query)]
+        # HS2 returns one column, but SparkSQL returns 3 (schema, table_name, is_temporary)
+        return [row[0] if len(row) == 1 else row[1] for row in connection.execute(query)]
 
     def do_rollback(self, dbapi_connection):
         # No transactions for Hive
